@@ -1,0 +1,12 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Prevent indexing of API endpoints
+Disallow: /api/
+
+# Allow crawling of static assets
+Allow: /assets/
+
+# Sitemap location
+Sitemap: https://ab-test-toolkit.swayvendigital.com/sitemap.xml

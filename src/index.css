@@ -1,0 +1,226 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Core brand colors */
+  --primary: #004f80;
+  --secondary: #7191b7;
+  --accent: #4ac7e9;
+  --highlight: #ffaa0c;
+  --success: #67cc34;
+  --error: #e8506e;
+  --dark-1: #0d2d52;
+  --dark-2: #5f6582;
+  --gray-1: #d8d8df;
+  --tint-20: #d9dfec;
+  --tint-50: #bcc9de;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-tint-20;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-tint-20;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-dark;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+/* Layout utilities */
+.container-custom {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Component base styles */
+.card {
+  @apply bg-white rounded-lg shadow-lg p-6 transition-all duration-300;
+}
+
+.card-hover {
+  @apply hover:shadow-xl hover:-translate-y-1;
+}
+
+.section {
+  @apply py-12 sm:py-16 lg:py-20;
+}
+
+/* Form elements */
+.input-base {
+  @apply w-full rounded-lg border-gray-300 shadow-sm 
+         focus:border-primary focus:ring-primary focus:ring-opacity-50 
+         transition-all duration-200;
+}
+
+.label-base {
+  @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+.select-base {
+  @apply w-full rounded-lg border-gray-300 shadow-sm 
+         focus:border-primary focus:ring-primary focus:ring-opacity-50 
+         transition-all duration-200;
+}
+
+/* Buttons */
+.btn {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-lg
+         font-medium transition-all duration-200 gap-2;
+}
+
+.btn-primary {
+  @apply bg-primary text-white hover:bg-primary-dark;
+}
+
+.btn-secondary {
+  @apply bg-secondary text-white hover:bg-secondary-dark;
+}
+
+.btn-accent {
+  @apply bg-accent text-white hover:bg-primary;
+}
+
+.btn-outline {
+  @apply border-2 border-primary text-primary hover:bg-tint-20;
+}
+
+/* Results display */
+.results-container {
+  @apply bg-blue-50 p-4 rounded-lg mt-6;
+}
+
+.results-grid {
+  @apply grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4;
+}
+
+.result-item {
+  @apply bg-white p-4 rounded-lg shadow;
+}
+
+.result-label {
+  @apply text-sm text-gray-600;
+}
+
+.result-value {
+  @apply text-2xl font-bold text-blue-600;
+}
+
+/* Charts */
+.chart-container {
+  @apply h-[400px] mb-6;
+}
+
+/* Accordion */
+.accordion {
+  @apply bg-white rounded-lg shadow-lg overflow-hidden;
+}
+
+.accordion-header {
+  @apply w-full p-4 flex items-center justify-between 
+         hover:bg-gray-50 transition-colors duration-150;
+}
+
+.accordion-content {
+  @apply overflow-hidden transition-all duration-300;
+}
+
+/* Navigation */
+.nav-link {
+  @apply text-gray-600 hover:text-primary transition-colors duration-200;
+}
+
+.nav-link-active {
+  @apply text-primary font-medium;
+}
+
+/* Status indicators */
+.badge {
+  @apply px-2.5 py-0.5 rounded-full text-sm font-medium;
+}
+
+.badge-success {
+  @apply bg-success bg-opacity-10 text-success;
+}
+
+.badge-error {
+  @apply bg-error bg-opacity-10 text-error;
+}
+
+/* Tooltips */
+.tooltip {
+  @apply relative inline-block;
+}
+
+.tooltip-content {
+  @apply absolute z-10 px-3 py-2 text-sm text-white bg-gray-900 
+         rounded-lg shadow-sm invisible opacity-0 transition-all duration-200;
+}
+
+.tooltip:hover .tooltip-content {
+  @apply visible opacity-100;
+}
+
+/* Loading states */
+.loading-spinner {
+  @apply animate-spin h-5 w-5 text-primary;
+}
+
+.loading-overlay {
+  @apply absolute inset-0 bg-white bg-opacity-75 
+         flex items-center justify-center;
+}
+
+/* Error states */
+.error-message {
+  @apply text-error text-sm mt-1;
+}
+
+/* Helper classes */
+.glass {
+  @apply bg-white bg-opacity-10 backdrop-blur-lg;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+}

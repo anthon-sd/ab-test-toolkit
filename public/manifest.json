@@ -1,0 +1,27 @@
+{
+  "name": "A/B Test Stats Toolkit",
+  "short_name": "AB Testing",
+  "description": "Game Analytics A/B Testing Calculator for making data-driven decisions",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#004f80",
+  "theme_color": "#004f80",
+  "icons": [
+    {
+      "src": "https://gxhvwiwtmelfrxnwptrr.supabase.co/storage/v1/object/sign/branding-assets/7.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJicmFuZGluZy1hc3NldHMvNy5wbmciLCJpYXQiOjE3NDE3MjE0NTgsImV4cCI6NDg5NTMyMTQ1OH0.QFExuEBvIDEeGnW4X6WEEFb5CRclplaAJb9JcdLGpww",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://gxhvwiwtmelfrxnwptrr.supabase.co/storage/v1/object/sign/branding-assets/7.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJicmFuZGluZy1hc3NldHMvNy5wbmciLCJpYXQiOjE3NDE3MjE0NTgsImV4cCI6NDg5NTMyMTQ1OH0.QFExuEBvIDEeGnW4X6WEEFb5CRclplaAJb9JcdLGpww",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "https://gxhvwiwtmelfrxnwptrr.supabase.co/storage/v1/object/sign/branding-assets/7.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJicmFuZGluZy1hc3NldHMvNy5wbmciLCJpYXQiOjE3NDE3MjE0NTgsImV4cCI6NDg5NTMyMTQ1OH0.QFExuEBvIDEeGnW4X6WEEFb5CRclplaAJb9JcdLGpww",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
