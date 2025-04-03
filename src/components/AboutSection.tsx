@@ -48,6 +48,7 @@ export default function AboutSection() {
                   </h4>
                   <p className="text-white">
                     Set realistic uplift targets based on historical KPI data using standard deviation methodology.
+                  </p>
                 </div>
                 <div className="bg-[#0d2d52] p-6 rounded-lg">
                   <h4 className="text-lg font-semibold text-[#ffaa0c] mb-2">
@@ -55,6 +56,7 @@ export default function AboutSection() {
                   </h4>
                   <p className="text-white">
                     Determine the optimal number of users per variant to detect meaningful uplifts with statistical confidence.
+                  </p>
                 </div>
                 <div className="bg-[#0d2d52] p-6 rounded-lg">
                   <h4 className="text-lg font-semibold text-[#ffaa0c] mb-2">
