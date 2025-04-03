@@ -306,14 +306,14 @@ export default function UpliftCalculator() {
       <div className="space-y-4">
         <div className="flex flex-col space-y-2">
           <label htmlFor="data-input" className="text-sm font-medium text-gray-700">
-            Enter your KPI data (one value per line)
+            Enter your historical KPI data here (one value per line). Use weekly data for best results!
           </label>
           <textarea
             id="data-input"
             value={rawData}
             onChange={(e) => setRawData(e.target.value)}
             className="w-full h-32 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter your KPI data here..."
+            placeholder="Enter your historical KPI data here..."
           />
         </div>
         
