@@ -1,3 +1,5 @@
+import { DataLayerEvent } from './gtm';
+
 interface AnalyticsEvent {
   event: string;
   event_category: string;
@@ -5,13 +7,9 @@ interface AnalyticsEvent {
   [key: string]: any;
 }
 
-interface DataLayer {
-  push: (event: AnalyticsEvent) => void;
-}
-
 declare global {
   interface Window {
-    dataLayer: DataLayer;
+    dataLayer: DataLayerEvent[];
   }
 }
 
@@ -19,23 +17,13 @@ export const initializeAnalytics = () => {
   window.dataLayer = window.dataLayer || [];
 };
 
-export const trackEvent = (
-  eventName: string,
-  eventProperties: Record<string, any> = {}
-) => {
-  if (typeof window === 'undefined') return;
-
-  const event: AnalyticsEvent = {
-    event: eventName,
-    event_category: 'User Action',
-    event_timestamp: new Date().toISOString(),
-    page_title: document.title,
-    page_location: window.location.href,
-    page_path: window.location.pathname,
-    ...eventProperties
-  };
-
-  window.dataLayer.push(event);
+export const trackEvent = (eventName: string, eventData: Record<string, any> = {}): void => {
+  if (typeof window !== 'undefined' && window.dataLayer) {
+    window.dataLayer.push({
+      event: eventName,
+      ...eventData
+    });
+  }
 };
 
 export const trackCalculation = (
@@ -43,7 +31,7 @@ export const trackCalculation = (
   inputs: Record<string, any>,
   results: Record<string, any>
 ) => {
-  trackEvent('calculation_completed', {
+  trackEvent('calculator_used', {
     calculator_type: calculatorType,
     inputs,
     results
@@ -54,9 +42,9 @@ export const trackDownload = (
   fileType: string,
   data: Record<string, any>
 ) => {
-  trackEvent('file_download', {
+  trackEvent('file_downloaded', {
     file_type: fileType,
-    data_included: data
+    ...data
   });
 };
 

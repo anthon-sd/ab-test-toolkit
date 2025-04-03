@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Calculator } from 'lucide-react';
 
 interface BaseCalculatorProps {

@@ -1,11 +1,11 @@
-interface DataLayer {
-  event?: string;
+export interface DataLayerEvent {
+  event: string;
   [key: string]: any;
 }
 
 declare global {
   interface Window {
-    dataLayer: DataLayer[];
+    dataLayer: DataLayerEvent[];
   }
 }
 
@@ -16,7 +16,7 @@ if (typeof window !== 'undefined') {
   window.dataLayer = window.dataLayer || [];
 }
 
-export const pushToDataLayer = (data: DataLayer): void => {
+export const pushToDataLayer = (data: DataLayerEvent): void => {
   if (typeof window !== 'undefined' && window.dataLayer) {
     window.dataLayer.push(data);
   }
