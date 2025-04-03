@@ -241,7 +241,7 @@ export function analyzeKPIData(values: number[]): KPIData {
 
   try {
     if (values.length >= 2) {
-      standardDeviation = calculateSampleStdDev(values, mean);
+      standardDeviation = calculateSampleStdDev(values);
     } else {
       errorMessage = "Sample standard deviation requires at least 2 data points.";
       modelUsed = 'none';
@@ -266,23 +266,33 @@ function calculateMean(values: number[]): number | null {
   return values.reduce((sum, val) => sum + val, 0) / values.length;
 }
 
-function calculateSampleStdDev(values: number[], mean: number): number | null {
-  if (!values || values.length < 2) return null;
-  const variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (values.length - 1);
+function calculateSampleStdDev(values: number[]): number | null {
+  const mean = calculateMean(values);
+  if (mean === null) return null;
+  const squaredDiffs = values.map(value => Math.pow(value - mean, 2));
+  const variance = squaredDiffs.reduce((sum, value) => sum + value, 0) / (values.length - 1);
   return Math.sqrt(variance);
 }
 
-function calculateExponentialStdDev(values: number[], alpha: number): number | null {
-  if (!values || values.length < 2) return null;
-  
-  let ewma = values[0];
-  let ewmv = 0;
+function calculatePopulationStdDev(values: number[]): number | null {
+  const mean = calculateMean(values);
+  if (mean === null) return null;
+  const squaredDiffs = values.map(value => Math.pow(value - mean, 2));
+  const variance = squaredDiffs.reduce((sum, value) => sum + value, 0) / values.length;
+  return Math.sqrt(variance);
+}
 
-  for (let i = 1; i < values.length; i++) {
-    const diff = values[i] - ewma;
-    ewma = ewma + alpha * diff;
-    ewmv = (1 - alpha) * (ewmv + alpha * Math.pow(diff, 2));
+function calculateMovingStdDev(values: number[], windowSize: number = 3): number | null {
+  if (values.length < windowSize) {
+    return calculateSampleStdDev(values);
   }
 
-  return Math.sqrt(Math.max(0, ewmv));
+  const movingWindows: number[][] = [];
+  for (let i = 0; i <= values.length - windowSize; i++) {
+    movingWindows.push(values.slice(i, i + windowSize));
+  }
+
+  const stdDevs = movingWindows.map(window => calculateSampleStdDev(window)).filter((stdDev): stdDev is number => stdDev !== null);
+  if (stdDevs.length === 0) return null;
+  return calculateMean(stdDevs);
 }
