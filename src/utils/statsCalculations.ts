@@ -211,9 +211,7 @@ function chiSquareCDF(x: number, df: number): number {
   return betaIncomplete(df/2, 0.5, df/(df + x));
 }
 
-export function analyzeKPIData(values: number[], options: {
-  stdDevModel?: 'sample';
-} = {}): KPIData {
+export function analyzeKPIData(values: number[]): KPIData {
   // Input Validation and Edge Case Handling
   if (!values || values.length === 0) {
     return {
@@ -263,16 +261,9 @@ export function analyzeKPIData(values: number[], options: {
   };
 }
 
-// Helper functions
 function calculateMean(values: number[]): number | null {
   if (!values || values.length === 0) return null;
-  return values.reduce((a, b) => a + b, 0) / values.length;
-}
-
-function calculatePopulationStdDev(values: number[], mean: number): number | null {
-  if (!values || values.length === 0) return null;
-  const variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length;
-  return Math.sqrt(variance);
+  return values.reduce((sum, val) => sum + val, 0) / values.length;
 }
 
 function calculateSampleStdDev(values: number[], mean: number): number | null {
