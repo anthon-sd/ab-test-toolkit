@@ -68,9 +68,7 @@ export default function UpliftCalculator() {
         .filter((num): num is number => num !== null);
 
       if (values.length >= 2) {
-        const data = analyzeKPIData(values, {
-          stdDevModel: 'sample'
-        });
+        const data = analyzeKPIData(values);
 
         setKpiData(data);
 
@@ -285,7 +283,8 @@ export default function UpliftCalculator() {
 
   const handleDownloadPDF = () => {
     if (!kpiData || !uplifts || kpiData.mean === null || kpiData.standardDeviation === null) return;
-    generateUpliftPDF(kpiData, uplifts);
+    const pdf = generateUpliftPDF(kpiData, uplifts);
+    pdf.save('uplift-analysis.pdf');
     trackPDFDownload('uplift', {
       metric_type: 'conversion',
       data_points: kpiData.values.length,
@@ -334,6 +333,27 @@ export default function UpliftCalculator() {
       {kpiData && kpiData.mean !== null && kpiData.standardDeviation !== null && uplifts && (
         <div className="space-y-6">
           <div className="flex flex-col space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-white rounded-lg shadow">
+                <h3 className="text-sm font-medium text-gray-500">Mean</h3>
+                <p className="mt-1 text-2xl font-semibold text-gray-900">
+                  {kpiData.mean !== null ? formatValue(kpiData.mean) : '0'}
+                </p>
+              </div>
+              <div className="p-4 bg-white rounded-lg shadow">
+                <h3 className="text-sm font-medium text-gray-500">Standard Deviation</h3>
+                <p className="mt-1 text-2xl font-semibold text-gray-900">
+                  {kpiData.standardDeviation !== null ? formatValue(kpiData.standardDeviation) : '0'}
+                </p>
+              </div>
+              <div className="p-4 bg-white rounded-lg shadow">
+                <h3 className="text-sm font-medium text-gray-500">Data Points</h3>
+                <p className="mt-1 text-2xl font-semibold text-gray-900">
+                  {kpiData.values.length}
+                </p>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Conservative</h3>

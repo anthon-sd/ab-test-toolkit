@@ -73,17 +73,49 @@ export const generateUpliftPDF = (kpiData: KPIData, uplifts: any) => {
   
   // KPI Data Summary
   yPos = addSectionHeader(pdf, 'KPI Data Summary', yPos);
-  yPos = addDataRow(pdf, 'Average Value:', kpiData?.mean?.toFixed(4) || '0', 30, yPos);
-  yPos = addDataRow(pdf, 'Standard Deviation:', kpiData?.standardDeviation?.toFixed(4) || '0', 30, yPos);
-  yPos = addDataRow(pdf, 'Data Points:', kpiData.values.length.toString(), 30, yPos);
   
-  yPos += 10;
+  // Add scorecards with the same styling as the calculator
+  const scorecardWidth = (pageWidth - 80) / 3;
+  const scorecardHeight = 40;
+  const scorecardSpacing = 10;
+  
+  // Mean Scorecard
+  pdf.setFillColor(0, 79, 128);
+  pdf.rect(20, yPos, scorecardWidth, scorecardHeight, 'F');
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(12);
+  pdf.text('Mean', 25, yPos + 10);
+  pdf.setFontSize(16);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(kpiData?.mean?.toFixed(4) || '0', 25, yPos + 25);
+  
+  // Standard Deviation Scorecard
+  pdf.setFillColor(103, 204, 52);
+  pdf.rect(20 + scorecardWidth + scorecardSpacing, yPos, scorecardWidth, scorecardHeight, 'F');
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(12);
+  pdf.text('Standard Deviation', 25 + scorecardWidth + scorecardSpacing, yPos + 10);
+  pdf.setFontSize(16);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(kpiData?.standardDeviation?.toFixed(4) || '0', 25 + scorecardWidth + scorecardSpacing, yPos + 25);
+  
+  // Data Points Scorecard
+  pdf.setFillColor(255, 170, 12);
+  pdf.rect(20 + (scorecardWidth + scorecardSpacing) * 2, yPos, scorecardWidth, scorecardHeight, 'F');
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(12);
+  pdf.text('Data Points', 25 + (scorecardWidth + scorecardSpacing) * 2, yPos + 10);
+  pdf.setFontSize(16);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(kpiData.values.length.toString(), 25 + (scorecardWidth + scorecardSpacing) * 2, yPos + 25);
+  
+  yPos += scorecardHeight + 20;
   
   // Uplift Targets
   yPos = addSectionHeader(pdf, 'Recommended Uplift Targets', yPos);
   
   // Conservative Target
-  pdf.setFillColor(103, 204, 52); // Success green
+  pdf.setFillColor(103, 204, 52);
   pdf.rect(30, yPos - 5, pageWidth - 60, 25, 'F');
   pdf.setTextColor(255, 255, 255);
   yPos = addDataRow(pdf, 'Conservative (0.5σ):', `${(uplifts.conservative * 100).toFixed(1)}% uplift`, 35, yPos + 5);
@@ -93,7 +125,7 @@ export const generateUpliftPDF = (kpiData: KPIData, uplifts: any) => {
   yPos += 10;
   
   // Moderate Target
-  pdf.setFillColor(255, 170, 12); // Warning yellow
+  pdf.setFillColor(255, 170, 12);
   pdf.rect(30, yPos - 5, pageWidth - 60, 25, 'F');
   pdf.setTextColor(255, 255, 255);
   yPos = addDataRow(pdf, 'Moderate (1.0σ):', `${(uplifts.moderate * 100).toFixed(1)}% uplift`, 35, yPos + 5);
@@ -103,12 +135,41 @@ export const generateUpliftPDF = (kpiData: KPIData, uplifts: any) => {
   yPos += 10;
   
   // Aggressive Target
-  pdf.setFillColor(232, 80, 110); // Error red
+  pdf.setFillColor(232, 80, 110);
   pdf.rect(30, yPos - 5, pageWidth - 60, 25, 'F');
   pdf.setTextColor(255, 255, 255);
   yPos = addDataRow(pdf, 'Aggressive (2.0σ):', `${(uplifts.aggressive * 100).toFixed(1)}% uplift`, 35, yPos + 5);
   yPos = addDataRow(pdf, 'Target Value:', kpiData?.mean ? (kpiData.mean * (1 + uplifts.aggressive)).toFixed(4) : '0', 35, yPos);
   pdf.setTextColor(0, 0, 0);
+  
+  yPos += 20;
+  
+  // Add Data Distribution Graph
+  yPos = addSectionHeader(pdf, 'Data Distribution', yPos);
+  
+  // Draw graph background
+  pdf.setFillColor(240, 240, 240);
+  pdf.rect(30, yPos, pageWidth - 60, 80, 'F');
+  
+  // Draw mean line
+  pdf.setDrawColor(0, 79, 128);
+  pdf.setLineWidth(0.5);
+  const meanX = 30 + ((pageWidth - 60) * 0.5);
+  pdf.line(meanX, yPos, meanX, yPos + 80);
+  
+  // Draw standard deviation ranges
+  pdf.setDrawColor(103, 204, 52);
+  pdf.setLineWidth(0.3);
+  const stdDevWidth = (pageWidth - 60) * 0.25;
+  pdf.line(meanX - stdDevWidth, yPos, meanX - stdDevWidth, yPos + 80);
+  pdf.line(meanX + stdDevWidth, yPos, meanX + stdDevWidth, yPos + 80);
+  
+  // Add labels
+  pdf.setTextColor(0, 0, 0);
+  pdf.setFontSize(10);
+  pdf.text('Mean', meanX, yPos + 85);
+  pdf.text('-1σ', meanX - stdDevWidth, yPos + 85);
+  pdf.text('+1σ', meanX + stdDevWidth, yPos + 85);
   
   // Add footer
   addFooter(pdf);
