@@ -36,7 +36,7 @@ export default function AboutSection() {
         <div className="p-8 pt-0">
           <div className="prose max-w-none space-y-6">
             <p className="text-lg text-white">
-              This A/B Test Stats Toolkit is designed specifically for game studios looking to optimize player engagement, retention, and monetization through rigorous experimentation. Whether you're testing new game mechanics, in-game economy tweaks, or LiveOps strategies, our toolkit provides the statistical insights you need to drive meaningful improvements.
+              This A/B Test Stats Toolkit is designed for game studios looking to optimize player engagement, retention, and monetization through rigorous experimentation. Whether you're testing new game mechanics, in-game economy tweaks, or LiveOps strategies, our toolkit provides the statistical insights you need to drive meaningful improvements.
             </p>
 
             <div className="space-y-6">
@@ -47,23 +47,21 @@ export default function AboutSection() {
                     ✅ KPI Uplift Calculator
                   </h4>
                   <p className="text-white">
-                    Set realistic uplift targets based on historical KPI data using standard deviation methodology. Understand what incremental gains are achievable before running a test.
-                  </p>
+                    Set realistic uplift targets based on historical KPI data using standard deviation methodology.
                 </div>
                 <div className="bg-[#0d2d52] p-6 rounded-lg">
                   <h4 className="text-lg font-semibold text-[#ffaa0c] mb-2">
                     ✅ Sample Size Calculator
                   </h4>
                   <p className="text-white">
-                    Determine the optimal number of users per variant to detect meaningful uplifts with statistical confidence. Ensure your tests are powered correctly to deliver actionable insights.
-                  </p>
+                    Determine the optimal number of users per variant to detect meaningful uplifts with statistical confidence.
                 </div>
                 <div className="bg-[#0d2d52] p-6 rounded-lg">
                   <h4 className="text-lg font-semibold text-[#ffaa0c] mb-2">
                     ✅ Significance Calculator
                   </h4>
                   <p className="text-white">
-                    Evaluate A/B test results using both frequentist and Bayesian approaches, giving you a well-rounded view of statistical significance and decision-making confidence.
+                    Evaluate A/B test results using the frequentist approach, a robust and accurate method for determining statistical significance.
                   </p>
                 </div>
               </div>
@@ -72,7 +70,7 @@ export default function AboutSection() {
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-white">Built for Game Studios</h3>
               <p className="text-white">
-                This toolkit is tailored for game-specific KPIs, including:
+                This toolkit is tailored for game studio business KPIs, including:
               </p>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 list-none pl-0">
                 <li className="flex flex-col gap-2 bg-[#0d2d52] p-4 rounded-lg">
@@ -132,7 +130,7 @@ export default function AboutSection() {
                 <li className="flex flex-col gap-2 bg-[#0d2d52] p-4 rounded-lg">
                   <div className="flex items-center gap-2">
                     <span className="text-xl">🎮</span>
-                    <span className="font-semibold text-[#ffaa0c]">Optimized for the Gaming Industry</span>
+                    <span className="font-semibold text-[#ffaa0c]">Tailored for Game KPIs</span>
                   </div>
                   <span className="text-white">
                     Designed by experts who understand game analytics.</span>
