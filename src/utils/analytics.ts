@@ -1,12 +1,5 @@
 import { DataLayerEvent } from './gtm';
 
-interface AnalyticsEvent {
-  event: string;
-  event_category: string;
-  event_timestamp: string;
-  [key: string]: any;
-}
-
 declare global {
   interface Window {
     dataLayer: DataLayerEvent[];
