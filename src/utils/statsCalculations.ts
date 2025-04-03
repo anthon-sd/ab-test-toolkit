@@ -261,38 +261,15 @@ export function analyzeKPIData(values: number[]): KPIData {
   };
 }
 
-function calculateMean(values: number[]): number | null {
-  if (!values || values.length === 0) return null;
-  return values.reduce((sum, val) => sum + val, 0) / values.length;
-}
-
-function calculateSampleStdDev(values: number[]): number | null {
+// Helper function to calculate sample standard deviation
+const calculateSampleStdDev = (values: number[]): number => {
   const mean = calculateMean(values);
-  if (mean === null) return null;
   const squaredDiffs = values.map(value => Math.pow(value - mean, 2));
   const variance = squaredDiffs.reduce((sum, value) => sum + value, 0) / (values.length - 1);
   return Math.sqrt(variance);
-}
+};
 
-function calculatePopulationStdDev(values: number[]): number | null {
-  const mean = calculateMean(values);
-  if (mean === null) return null;
-  const squaredDiffs = values.map(value => Math.pow(value - mean, 2));
-  const variance = squaredDiffs.reduce((sum, value) => sum + value, 0) / values.length;
-  return Math.sqrt(variance);
-}
-
-function calculateMovingStdDev(values: number[], windowSize: number = 3): number | null {
-  if (values.length < windowSize) {
-    return calculateSampleStdDev(values);
-  }
-
-  const movingWindows: number[][] = [];
-  for (let i = 0; i <= values.length - windowSize; i++) {
-    movingWindows.push(values.slice(i, i + windowSize));
-  }
-
-  const stdDevs = movingWindows.map(window => calculateSampleStdDev(window)).filter((stdDev): stdDev is number => stdDev !== null);
-  if (stdDevs.length === 0) return null;
-  return calculateMean(stdDevs);
-}
+// Helper function to calculate mean
+const calculateMean = (values: number[]): number => {
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+};
