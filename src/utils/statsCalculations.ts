@@ -212,16 +212,8 @@ function chiSquareCDF(x: number, df: number): number {
 }
 
 export function analyzeKPIData(values: number[], options: {
-  stdDevModel?: 'population' | 'sample' | 'moving' | 'exponential';
-  windowSize?: number;
-  alpha?: number;
+  stdDevModel?: 'sample';
 } = {}): KPIData {
-  const {
-    stdDevModel = 'sample',
-    windowSize = 5,
-    alpha = 0.2
-  } = options;
-
   // Input Validation and Edge Case Handling
   if (!values || values.length === 0) {
     return {
@@ -246,63 +238,15 @@ export function analyzeKPIData(values: number[], options: {
   }
 
   let standardDeviation: number | null = null;
-  let modelUsed: KPIData['stdDevModelUsed'] = stdDevModel;
+  let modelUsed: KPIData['stdDevModelUsed'] = 'sample';
   let errorMessage: string | undefined = undefined;
 
   try {
-    switch (stdDevModel) {
-      case 'population':
-        if (values.length >= 1) {
-          standardDeviation = calculatePopulationStdDev(values, mean);
-        } else {
-          errorMessage = "Population standard deviation requires at least 1 data point.";
-          modelUsed = 'none';
-        }
-        break;
-
-      case 'moving':
-        if (windowSize <= 0 || !Number.isInteger(windowSize)) {
-          errorMessage = `Invalid windowSize (${windowSize}). Must be a positive integer.`;
-          modelUsed = 'none';
-        } else if (values.length < windowSize) {
-          if (values.length >= 2) {
-            standardDeviation = calculateSampleStdDev(values, mean);
-            errorMessage = `Not enough data for window size ${windowSize}. Using sample SD.`;
-            modelUsed = 'sample';
-          } else {
-            errorMessage = `Not enough data for window size ${windowSize}.`;
-            modelUsed = 'none';
-          }
-        } else {
-          const lastWindow = values.slice(-windowSize);
-          const windowMean = calculateMean(lastWindow);
-          if (windowMean !== null) {
-            standardDeviation = calculateSampleStdDev(lastWindow, windowMean);
-          }
-        }
-        break;
-
-      case 'exponential':
-        if (alpha <= 0 || alpha >= 1) {
-          errorMessage = `Invalid alpha (${alpha}). Must be between 0 and 1.`;
-          modelUsed = 'none';
-        } else if (values.length >= 2) {
-          standardDeviation = calculateExponentialStdDev(values, alpha);
-        } else {
-          errorMessage = "Exponential SD requires at least 2 data points.";
-          modelUsed = 'none';
-        }
-        break;
-
-      case 'sample':
-      default:
-        if (values.length >= 2) {
-          standardDeviation = calculateSampleStdDev(values, mean);
-        } else {
-          errorMessage = "Sample standard deviation requires at least 2 data points.";
-          modelUsed = 'none';
-        }
-        break;
+    if (values.length >= 2) {
+      standardDeviation = calculateSampleStdDev(values, mean);
+    } else {
+      errorMessage = "Sample standard deviation requires at least 2 data points.";
+      modelUsed = 'none';
     }
   } catch (error) {
     standardDeviation = null;

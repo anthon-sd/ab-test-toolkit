@@ -4,7 +4,6 @@ import { analyzeKPIData } from '../utils/statsCalculations';
 import { generateUpliftPDF } from '../utils/pdfGenerator';
 import { KPIData } from '../types/stats';
 import { trackUpliftCalculation, trackPDFDownload } from '../utils/gtm';
-import VolatilityModelInfo from './VolatilityModelInfo';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -52,9 +51,6 @@ export default function UpliftCalculator() {
     moderate: 1.0,
     aggressive: 1.5
   });
-  const [selectedModel, setSelectedModel] = useState<'sample' | 'population' | 'moving' | 'exponential'>('sample');
-  const [windowSize, setWindowSize] = useState<number>(5);
-  const [alpha, setAlpha] = useState<number>(0.2);
   const [isCalculating, setIsCalculating] = useState(false);
 
   const calculateResults = useCallback(() => {
@@ -73,9 +69,7 @@ export default function UpliftCalculator() {
 
       if (values.length >= 2) {
         const data = analyzeKPIData(values, {
-          stdDevModel: selectedModel,
-          windowSize,
-          alpha
+          stdDevModel: 'sample'
         });
 
         setKpiData(data);
@@ -101,7 +95,7 @@ export default function UpliftCalculator() {
     } finally {
       setIsCalculating(false);
     }
-  }, [rawData, selectedModel, windowSize, alpha, stdDevMultipliers]);
+  }, [rawData, stdDevMultipliers]);
 
   const handleMultiplierChange = (type: keyof StdDevMultipliers, value: string) => {
     const newValue = parseFloat(value);
@@ -303,21 +297,6 @@ export default function UpliftCalculator() {
     });
   };
 
-  const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newModel = e.target.value as typeof selectedModel;
-    setSelectedModel(newModel);
-  };
-
-  const handleWindowSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newSize = Math.min(Math.max(2, parseInt(e.target.value) || 2), kpiData?.values.length || 2);
-    setWindowSize(newSize);
-  };
-
-  const handleAlphaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newAlpha = Math.min(Math.max(0, parseFloat(e.target.value) || 0), 1);
-    setAlpha(newAlpha);
-  };
-
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="flex items-center gap-2 mb-6">
@@ -355,49 +334,6 @@ export default function UpliftCalculator() {
       {kpiData && kpiData.mean !== null && kpiData.standardDeviation !== null && uplifts && (
         <div className="space-y-6">
           <div className="flex flex-col space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <label htmlFor="std-dev-model" className="text-sm font-medium text-gray-700">
-                    Standard Deviation Model:
-                  </label>
-                  <select
-                    id="std-dev-model"
-                    value={selectedModel}
-                    onChange={handleModelChange}
-                    className="text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="sample">Sample</option>
-                    <option value="population">Population</option>
-                    <option value="moving">Moving</option>
-                    <option value="exponential">Exponential</option>
-                  </select>
-                </div>
-                <VolatilityModelInfo selectedModel={selectedModel} />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 bg-white rounded-lg shadow">
-                <h3 className="text-sm font-medium text-gray-500">Mean</h3>
-                <p className="mt-1 text-2xl font-semibold text-gray-900">
-                  {formatValue(kpiData.mean)}
-                </p>
-              </div>
-              <div className="p-4 bg-white rounded-lg shadow">
-                <h3 className="text-sm font-medium text-gray-500">Standard Deviation</h3>
-                <p className="mt-1 text-2xl font-semibold text-gray-900">
-                  {formatValue(kpiData.standardDeviation)}
-                </p>
-              </div>
-              <div className="p-4 bg-white rounded-lg shadow">
-                <h3 className="text-sm font-medium text-gray-500">Data Points</h3>
-                <p className="mt-1 text-2xl font-semibold text-gray-900">
-                  {kpiData.values.length}
-                </p>
-              </div>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Conservative</h3>
@@ -478,49 +414,6 @@ export default function UpliftCalculator() {
                 </div>
               </div>
             </div>
-
-            {selectedModel === 'moving' && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Moving Average Settings</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Window Size
-                    </label>
-                    <input
-                      type="number"
-                      value={windowSize}
-                      onChange={(e) => handleWindowSizeChange(e)}
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      min="2"
-                      max={rawData.length}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {selectedModel === 'exponential' && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Exponential Settings</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Alpha (0-1)
-                    </label>
-                    <input
-                      type="number"
-                      value={alpha}
-                      onChange={(e) => handleAlphaChange(e)}
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      min="0"
-                      max="1"
-                      step="0.1"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
 
             {chartData && (
               <div className="bg-white p-4 rounded-lg shadow">
