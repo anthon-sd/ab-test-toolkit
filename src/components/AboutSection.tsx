@@ -72,7 +72,7 @@ export default function AboutSection() {
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-white">Built for Game Studios</h3>
               <p className="text-white">
-                Unlike generic A/B testing tools, this toolkit is tailored for game-specific KPIs, including:
+                This toolkit is tailored for game-specific KPIs, including:
               </p>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 list-none pl-0">
                 <li className="flex flex-col gap-2 bg-[#0d2d52] p-4 rounded-lg">
