@@ -24,6 +24,18 @@ export default function RuntimeCalculator({ requiredSampleSize }: RuntimeCalcula
     calculateTestDuration();
   }, [requiredSampleSize, dailyTraffic]);
 
+  const handleDailyTrafficChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      setDailyTraffic(0);
+    } else {
+      const parsedValue = parseInt(value);
+      if (!isNaN(parsedValue)) {
+        setDailyTraffic(parsedValue);
+      }
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mt-6">
       <div className="flex items-center gap-2 mb-4">
@@ -39,8 +51,8 @@ export default function RuntimeCalculator({ requiredSampleSize }: RuntimeCalcula
           <input
             type="number"
             min="1"
-            value={dailyTraffic}
-            onChange={(e) => setDailyTraffic(parseInt(e.target.value) || 0)}
+            value={dailyTraffic || ''}
+            onChange={handleDailyTrafficChange}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
         </div>

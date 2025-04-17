@@ -89,13 +89,13 @@ export default function SampleSizeCalculator() {
             </label>
             <input
               type="number"
-              step="0.1"
+              step="0.01"
               min="0"
               max={isPercentageMetric ? "100" : undefined}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               value={params.baselineRate.toString()}
               onChange={(e) => handleNumberInput('baselineRate', e.target.value)}
-              placeholder={isPercentageMetric ? "e.g., 10" : "e.g., 25.50"}
+              placeholder={isPercentageMetric ? "e.g., 10.55" : "e.g., 25.50"}
             />
           </div>
 
@@ -105,11 +105,13 @@ export default function SampleSizeCalculator() {
             </label>
             <input
               type="number"
-              step="0.1"
+              step="0.01"
+              min="0"
+              max={isPercentageMetric ? "100" : undefined}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               value={params.expectedUplift.toString()}
               onChange={(e) => handleNumberInput('expectedUplift', e.target.value)}
-              placeholder={isPercentageMetric ? "e.g., 5" : "e.g., 0.05"}
+              placeholder={isPercentageMetric ? "e.g., 5.25" : "e.g., 0.0525"}
             />
           </div>
 
