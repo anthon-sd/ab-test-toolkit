@@ -4,6 +4,7 @@ import { calculateSignificance } from '../utils/statsCalculations';
 import { generateSignificancePDF } from '../utils/pdfGenerator';
 import { TestResults, StatisticalResults } from '../types/stats';
 import { trackSignificanceCalculation, trackPDFDownload } from '../utils/gtm';
+import HelpButton from './HelpButton';
 
 export default function SignificanceCalculator() {
   const [metricType, setMetricType] = useState<'conversion' | 'continuous'>('conversion');
@@ -131,16 +132,30 @@ export default function SignificanceCalculator() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="flex items-center gap-2 mb-6">
-        <BarChart className="w-6 h-6 text-blue-600" />
-        <h2 className="text-xl font-bold">Statistical Significance Calculator</h2>
+    <div className="bg-white rounded-lg shadow-md p-6 mt-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <BarChart className="w-6 h-6 text-blue-600" />
+          <h3 className="text-lg font-semibold">Statistical Significance Calculator</h3>
+        </div>
+        <HelpButton
+          title="How to Calculate Statistical Significance"
+          content="This calculator helps you determine if the differences between your control and treatment groups are statistically significant. Enter your test data for both groups, and the calculator will analyze the results using appropriate statistical tests. For conversion rates, it uses a two-proportion z-test. For continuous metrics, it uses a two-sample t-test."
+          calculatorType="Significance Calculator"
+        />
       </div>
 
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Metric Type
-        </label>
+        <div className="flex items-center justify-between">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Metric Type
+          </label>
+          <HelpButton
+            title="Understanding Metric Types"
+            content="Choose between conversion rate (percentage) or continuous value metrics. Conversion rate is for binary outcomes like clicks or purchases. Continuous values are for metrics like revenue, time spent, or order value. The calculator uses different statistical tests based on the metric type you select."
+            calculatorType="Metric Type"
+          />
+        </div>
         <select
           className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           value={metricType}
@@ -167,13 +182,27 @@ export default function SignificanceCalculator() {
         <div className={`rounded-lg p-6 transition-all duration-300 ${getGroupStyles('control')}`}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-gray-900">Control Group</h3>
-            {winningGroup === 'control' && stats?.significant && (
-              <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Winner</span>
-            )}
+            <div className="flex items-center gap-2">
+              {winningGroup === 'control' && stats?.significant && (
+                <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Winner</span>
+              )}
+              <HelpButton
+                title="Understanding Control Group"
+                content="The control group represents your baseline or current experience."
+                calculatorType="Control Group"
+              />
+            </div>
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Sample Size</label>
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700">Sample Size</label>
+                <HelpButton
+                  title="Understanding Sample Size"
+                  content="Enter the total number of users or observations in your control group. Larger sample sizes generally provide more reliable results and can detect smaller differences between groups."
+                  calculatorType="Sample Size"
+                />
+              </div>
               <input
                 type="number"
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -184,7 +213,14 @@ export default function SignificanceCalculator() {
             </div>
             {metricType === 'conversion' ? (
               <div>
-                <label className="block text-sm font-medium text-gray-700">Conversions</label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-medium text-gray-700">Conversions</label>
+                  <HelpButton
+                    title="Understanding Conversions"
+                    content="Enter the number of successful conversions in your control group. This could be purchases, sign-ups, or any other binary outcome you're measuring. The calculator will use this along with the sample size to determine the conversion rate."
+                    calculatorType="Conversions"
+                  />
+                </div>
                 <input
                   type="number"
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -201,7 +237,14 @@ export default function SignificanceCalculator() {
             ) : (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Mean Value</label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-medium text-gray-700">Mean Value</label>
+                    <HelpButton
+                      title="Understanding Mean Value"
+                      content="Enter the average value for your continuous metric in the control group. This could be average order value, time spent, or any other continuous metric. The mean is used to compare the central tendency between groups."
+                      calculatorType="Mean Value"
+                    />
+                  </div>
                   <input
                     type="number"
                     step="0.01"
@@ -212,7 +255,14 @@ export default function SignificanceCalculator() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Standard Deviation</label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-medium text-gray-700">Standard Deviation</label>
+                    <HelpButton
+                      title="Understanding Standard Deviation"
+                      content="Enter the standard deviation of your continuous metric in the control group. This measures how spread out the values are around the mean. A higher standard deviation indicates more variability in your data, which may require larger sample sizes to detect significant differences."
+                      calculatorType="Standard Deviation"
+                    />
+                  </div>
                   <input
                     type="number"
                     step="0.01"
@@ -230,13 +280,27 @@ export default function SignificanceCalculator() {
         <div className={`rounded-lg p-6 transition-all duration-300 ${getGroupStyles('treatment')}`}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-gray-900">Treatment Group</h3>
-            {winningGroup === 'treatment' && stats?.significant && (
-              <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Winner</span>
-            )}
+            <div className="flex items-center gap-2">
+              {winningGroup === 'treatment' && stats?.significant && (
+                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Winner</span>
+              )}
+              <HelpButton
+                title="Understanding Treatment Group"
+                content="The treatment group represents your new or experimental experience."
+                calculatorType="Treatment Group"
+              />
+            </div>
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Sample Size</label>
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700">Sample Size</label>
+                <HelpButton
+                  title="Understanding Sample Size"
+                  content="Enter the total number of users or observations in your treatment group. For valid results, the treatment group should have a similar sample size to the control group. Uneven sample sizes can affect the statistical power of your test."
+                  calculatorType="Sample Size"
+                />
+              </div>
               <input
                 type="number"
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -247,13 +311,20 @@ export default function SignificanceCalculator() {
             </div>
             {metricType === 'conversion' ? (
               <div>
-                <label className="block text-sm font-medium text-gray-700">Conversions</label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-medium text-gray-700">Conversions</label>
+                  <HelpButton
+                    title="Understanding Conversions"
+                    content="Enter the number of successful conversions in your treatment group. Compare this with the control group to see if your changes had a significant impact. Remember that statistical significance depends on both the difference in conversion rates and the sample sizes."
+                    calculatorType="Conversions"
+                  />
+                </div>
                 <input
                   type="number"
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   value={results.treatmentGroup.conversions}
                   onChange={(e) => handleTreatmentInput('conversions', e.target.value)}
-                  placeholder="e.g., 120"
+                  placeholder="e.g., 100"
                 />
                 {results.treatmentGroup.size && results.treatmentGroup.conversions && (
                   <p className="mt-1 text-sm text-gray-500">
@@ -264,25 +335,39 @@ export default function SignificanceCalculator() {
             ) : (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Mean Value</label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-medium text-gray-700">Mean Value</label>
+                    <HelpButton
+                      title="Understanding Mean Value"
+                      content="Enter the average value for your continuous metric in the treatment group. The calculator will compare this with the control group's mean to determine if there's a statistically significant difference. Larger differences are easier to detect with smaller sample sizes."
+                      calculatorType="Mean Value"
+                    />
+                  </div>
                   <input
                     type="number"
                     step="0.01"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     value={results.treatmentGroup.mean}
                     onChange={(e) => handleTreatmentInput('mean', e.target.value)}
-                    placeholder="e.g., 27.30"
+                    placeholder="e.g., 25.50"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Standard Deviation</label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-medium text-gray-700">Standard Deviation</label>
+                    <HelpButton
+                      title="Understanding Standard Deviation"
+                      content="Enter the standard deviation of your continuous metric in the treatment group. This helps the calculator understand the variability in your data. Similar standard deviations between groups make it easier to detect significant differences."
+                      calculatorType="Standard Deviation"
+                    />
+                  </div>
                   <input
                     type="number"
                     step="0.01"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     value={results.treatmentGroup.stdDev}
                     onChange={(e) => handleTreatmentInput('stdDev', e.target.value)}
-                    placeholder="e.g., 5.2"
+                    placeholder="e.g., 5.0"
                   />
                 </div>
               </>
@@ -291,79 +376,43 @@ export default function SignificanceCalculator() {
         </div>
       </div>
 
-      {isValidInput && stats && (
-        <div className="mt-8 space-y-4">
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={handleDownloadPDF}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Download Results (PDF)
-            </button>
-          </div>
-          
-          <div className={`p-6 rounded-lg ${
-            stats.significant 
-              ? winningGroup === 'control'
-                ? 'bg-red-50 border border-red-200'
-                : 'bg-green-50 border border-green-200'
-              : 'bg-yellow-50 border border-yellow-200'
-          }`}>
-            <h3 className="text-lg font-semibold mb-4">Results</h3>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+      {stats && (
+        <div className="mt-6 space-y-6">
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="flex justify-between items-start">
               <div>
-                <p className="text-sm font-medium text-gray-600">Relative Change</p>
-                <p className={`text-xl font-bold ${
-                  stats.significant
-                    ? winningGroup === 'control'
-                      ? 'text-red-600'
-                      : 'text-green-600'
-                    : stats.relativeUplift >= 0 ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {formatChange(stats.relativeUplift)}
-                </p>
-              </div>
-              {stats.absoluteChange !== undefined && (
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Absolute Change</p>
-                  <p className={`text-xl font-bold ${
-                    stats.significant
-                      ? winningGroup === 'control'
-                        ? 'text-red-600'
-                        : 'text-green-600'
-                      : stats.absoluteChange >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {formatValue(stats.absoluteChange)}
+                <p className="text-lg font-semibold text-blue-900">Statistical Results</p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-sm text-blue-700">
+                    p-value: {stats.pValue.toFixed(4)}
+                  </p>
+                  <p className="text-sm text-blue-700">
+                    Relative Uplift: {formatChange(stats.relativeUplift)}
+                  </p>
+                  <p className="text-sm text-blue-700">
+                    Absolute Change: {stats.absoluteChange !== undefined ? formatValue(stats.absoluteChange) : 'N/A'}
+                  </p>
+                  <p className="text-sm text-blue-700">
+                    Significant: {stats.significant ? 'Yes' : 'No'}
                   </p>
                 </div>
-              )}
-              <div>
-                <p className="text-sm font-medium text-gray-600">P-Value</p>
-                <p className="text-xl font-bold text-gray-900">
-                  {stats.pValue.toFixed(4)}
-                </p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Confidence Level</p>
-                <p className="text-xl font-bold text-gray-900">
-                  {((1 - stats.pValue) * 100).toFixed(1)}%
-                </p>
-              </div>
+              <HelpButton
+                title="Understanding Statistical Results"
+                content="The p-value indicates the probability of observing the results if there was no real difference between groups. A p-value below 0.05 typically indicates statistical significance. The relative uplift shows the percentage improvement, while the absolute change shows the actual difference in the metric. Use these results to make data-driven decisions about your test."
+                calculatorType="Statistical Results"
+              />
             </div>
-            <div className={`p-4 rounded-lg ${
-              stats.significant
-                ? winningGroup === 'control'
-                  ? 'bg-red-100'
-                  : 'bg-green-100'
-                : 'bg-yellow-100'
-            }`}>
-              <p className="text-sm font-medium">
-                {stats.significant 
-                  ? `✅ The results are statistically significant at the 95% confidence level. The ${winningGroup} group performed better with a ${formatChange(Math.abs(stats.relativeUplift))} ${stats.relativeUplift >= 0 ? 'increase' : 'decrease'}.`
-                  : "⚠️ The results are not statistically significant at the 95% confidence level. Consider running the test longer or increasing sample size."}
-              </p>
-            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              onClick={handleDownloadPDF}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download PDF Report
+            </button>
           </div>
         </div>
       )}
