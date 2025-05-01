@@ -217,7 +217,7 @@ export default function SignificanceCalculator() {
                   <label className="block text-sm font-medium text-gray-700">Conversions</label>
                   <HelpButton
                     title="Understanding Conversions"
-                    content="Enter the number of successful conversions in your control group. This could be purchases, sign-ups, or any other binary outcome you're measuring. The calculator will use this along with the sample size to determine the conversion rate."
+                    content="Enter the number of successful conversions in your control group. This could be purchases, interactions, or any other binary outcome you're measuring. The calculator will use this along with the sample size to determine the conversion rate."
                     calculatorType="Conversions"
                   />
                 </div>
