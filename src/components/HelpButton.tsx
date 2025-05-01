@@ -87,7 +87,7 @@ const HelpButton: React.FC<HelpButtonProps> = ({ title, content, calculatorType 
           }}
         >
           <div className="flex justify-between items-start">
-            <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+            <h3 className="text-lg font-bold text-black">{title}</h3>
             <button
               type="button"
               onClick={() => setShowHelp(false)}
@@ -96,7 +96,24 @@ const HelpButton: React.FC<HelpButtonProps> = ({ title, content, calculatorType 
               <XMarkIcon className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
-          <p className="mt-2 text-sm text-gray-700 leading-relaxed">{formattedContent}</p>
+          <p className="mt-2 text-sm text-black leading-relaxed">
+            {content.split('. ').map((sentence, index, array) => {
+              // Check if the sentence starts with a common header pattern (e.g., "Understanding", "How to")
+              const isHeader = sentence.startsWith('Understanding') || sentence.startsWith('How to');
+              return (
+                <React.Fragment key={index}>
+                  {isHeader ? <strong>{sentence}</strong> : sentence}
+                  {index < array.length - 1 ? '.' : ''}
+                  {index < array.length - 1 && (
+                    <>
+                      <br />
+                      <br />
+                    </>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </p>
         </div>,
         document.body
       )}

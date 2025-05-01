@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { TrendingUp, Download } from 'lucide-react';
+import { TrendingUp, Download, HelpCircle } from 'lucide-react';
 import { analyzeKPIData } from '../utils/statsCalculations';
 import { generateUpliftPDF } from '../utils/pdfGenerator';
 import { KPIData } from '../types/stats';
@@ -18,7 +18,6 @@ import {
   TooltipItem,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import HelpButton from './HelpButton';
 
 ChartJS.register(
   CategoryScale,
@@ -53,6 +52,7 @@ export default function UpliftCalculator() {
     aggressive: 1.5
   });
   const [isCalculating, setIsCalculating] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   const calculateResults = useCallback(() => {
     setIsCalculating(true);
@@ -142,7 +142,7 @@ export default function UpliftCalculator() {
           tension: 0.4,
         },
         {
-          label: 'Mean',
+          label: 'Baseline',
           data: Array(kpiData.values.length).fill(mean * 100), // Convert to percentage
           borderColor: '#004f80',
           backgroundColor: '#004f80',
@@ -298,138 +298,230 @@ export default function UpliftCalculator() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mt-6">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-6 h-6 text-blue-600" />
-          <h3 className="text-lg font-semibold">Uplift Calculator</h3>
+          <h2 className="text-xl font-bold">KPI Uplift Calculator</h2>
         </div>
-        <HelpButton
-          title="How to Calculate Uplift Targets"
-          content="This calculator helps you determine realistic uplift targets for your A/B tests based on historical data. Enter your historical KPI values (one per line) and adjust the standard deviation multipliers to set conservative, moderate, and aggressive targets. The calculator will analyze your data and provide uplift targets that account for natural variation in your metrics."
-          calculatorType="Uplift Calculator"
-        />
+        <button
+          onClick={() => setShowHelp(true)}
+          className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+          aria-label="Help"
+        >
+          <HelpCircle className="w-6 h-6" />
+        </button>
       </div>
 
-      <div className="space-y-6">
-        <div>
-          <div className="flex items-center justify-between">
-            <label className="block text-sm font-medium text-gray-700">
-              Enter Historical KPI Values (one per line)
-            </label>
-            <HelpButton
-              title="Understanding Historical Data"
-              content="Enter your historical KPI values, with one value per line. These should be percentage values (e.g., 2.5%) for conversion rates or actual values (e.g., 25.50) for continuous metrics. The calculator will analyze this data to understand the natural variation in your metric and help set realistic uplift targets. More data points will provide more accurate results."
-              calculatorType="Historical Data"
-            />
+      {showHelp && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl mx-4">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-xl font-bold">How to Use the Uplift Calculator</h3>
+              <button
+                onClick={() => setShowHelp(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold mb-2">1. Enter Your Data</h4>
+                <p className="text-gray-600">
+                  Input your historical KPI data with one value per line. For best results, use weekly data points.
+                  Values can be percentages (e.g., "5%") or decimals (e.g., "0.05").
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">2. Understanding the Results</h4>
+                <p className="text-gray-600">
+                  The calculator provides three uplift scenarios:
+                </p>
+                <ul className="list-disc pl-5 mt-2 space-y-1 text-gray-600">
+                  <li><span className="text-[#67cc34]">Conservative</span>: Lower risk, smaller uplift target</li>
+                  <li><span className="text-[#ffaa0c]">Moderate</span>: Balanced risk and uplift target</li>
+                  <li><span className="text-[#e8506e]">Aggressive</span>: Higher risk, larger uplift target</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">3. Adjusting Multipliers</h4>
+                <p className="text-gray-600">
+                  You can customize the standard deviation multipliers for each scenario to match your risk tolerance.
+                  Higher multipliers will result in more ambitious targets.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">4. Visualizing Results</h4>
+                <p className="text-gray-600">
+                  The chart shows your historical data points, the baseline, and the three target lines.
+                  Hover over the chart to see detailed values for each point.
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => setShowHelp(false)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Got it
+              </button>
+            </div>
           </div>
+        </div>
+      )}
+
+      <div className="space-y-4">
+        <div className="flex flex-col space-y-2">
+          <label htmlFor="data-input" className="text-sm font-medium text-gray-700">
+            Enter your historical KPI data here (one value per line). Use weekly data for best results!
+          </label>
           <textarea
+            id="data-input"
             value={rawData}
             onChange={(e) => setRawData(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            rows={5}
-            placeholder="Enter values (one per line)&#10;Example:&#10;2.5%&#10;3.1%&#10;2.8%"
+            className="w-full h-32 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter your historical KPI data here..."
           />
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {Object.entries(stdDevMultipliers).map(([type, value]) => (
-            <div key={type} className="flex flex-col">
-              <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-gray-700 capitalize">
-                  {type} Multiplier
-                </label>
-                <HelpButton
-                  title={`Understanding ${type} Multiplier`}
-                  content={`The ${type} multiplier determines how many standard deviations above the mean to set your target. A higher multiplier means a more ambitious target. ${type} targets are typically used for ${type === 'conservative' ? 'minimum viable improvements' : type === 'moderate' ? 'balanced improvements' : 'ambitious improvements'}.`}
-                  calculatorType={`${type} Multiplier`}
-                />
-              </div>
-              <input
-                type="number"
-                min="0"
-                step="0.1"
-                value={value}
-                onChange={(e) => handleMultiplierChange(type as keyof StdDevMultipliers, e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-          ))}
+        
+        <div className="flex justify-end">
+          <button
+            onClick={calculateResults}
+            disabled={isCalculating || !rawData.trim()}
+            className={`px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+              isCalculating || !rawData.trim() ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            {isCalculating ? 'Calculating...' : 'Calculate'}
+          </button>
         </div>
+      </div>
 
-        {kpiData && uplifts && (
-          <div className="space-y-6">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-lg font-semibold text-blue-900">Analysis Results</p>
-                  <div className="mt-2 space-y-1">
-                    <p className="text-sm text-blue-700">
-                      Mean: {kpiData.mean !== null ? formatValue(kpiData.mean) : 'N/A'}
-                    </p>
-                    <p className="text-sm text-blue-700">
-                      Standard Deviation: {kpiData.standardDeviation !== null ? formatValue(kpiData.standardDeviation) : 'N/A'}
-                    </p>
-                  </div>
-                </div>
-                <HelpButton
-                  title="Understanding Analysis Results"
-                  content="The mean represents the average value of your historical data, while the standard deviation shows how much variation exists in your data. These metrics help determine realistic uplift targets. Higher standard deviation means more natural variation in your metric, which may require larger sample sizes to detect changes."
-                  calculatorType="Analysis Results"
-                />
+      {kpiData && kpiData.mean !== null && kpiData.standardDeviation !== null && uplifts && (
+        <div className="space-y-6">
+          <div className="flex flex-col space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-white rounded-lg shadow">
+                <h3 className="text-sm font-medium text-gray-500">Baseline</h3>
+                <p className="mt-1 text-2xl font-semibold text-gray-900">
+                  {kpiData.mean !== null ? formatValue(kpiData.mean) : '0'}
+                </p>
+              </div>
+              <div className="p-4 bg-white rounded-lg shadow">
+                <h3 className="text-sm font-medium text-gray-500">Standard Deviation</h3>
+                <p className="mt-1 text-2xl font-semibold text-gray-900">
+                  {kpiData.standardDeviation !== null ? formatValue(kpiData.standardDeviation) : '0'}
+                </p>
+              </div>
+              <div className="p-4 bg-white rounded-lg shadow">
+                <h3 className="text-sm font-medium text-gray-500">Data Points</h3>
+                <p className="mt-1 text-2xl font-semibold text-gray-900">
+                  {kpiData.values.length}
+                </p>
               </div>
             </div>
 
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-lg font-semibold text-green-900">Uplift Targets</p>
-                  <div className="mt-2 space-y-1">
-                    <p className="text-sm text-green-700">
-                      Conservative: {formatUplift(uplifts.conservative)}
-                    </p>
-                    <p className="text-sm text-green-700">
-                      Moderate: {formatUplift(uplifts.moderate)}
-                    </p>
-                    <p className="text-sm text-green-700">
-                      Aggressive: {formatUplift(uplifts.aggressive)}
-                    </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Conservative</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Multiplier:</span>
+                    <input
+                      type="number"
+                      value={stdDevMultipliers.conservative}
+                      onChange={(e) => handleMultiplierChange('conservative', e.target.value)}
+                      className="w-20 px-2 py-1 border rounded text-right"
+                      step="0.1"
+                      min="0"
+                    />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Uplift:</span>
+                    <span className="text-lg font-bold text-[#67cc34]">{formatUplift(uplifts.conservative)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Target:</span>
+                    <span className="text-lg font-bold text-[#67cc34]">
+                      {kpiData && kpiData.mean !== null ? formatValue(kpiData.mean * (1 + uplifts.conservative)) : '0'}
+                    </span>
                   </div>
                 </div>
-                <HelpButton
-                  title="Understanding Uplift Targets"
-                  content="These are your calculated uplift targets based on your historical data and chosen multipliers. Conservative targets are more achievable but may not justify the test investment. Aggressive targets are more ambitious but may require larger sample sizes. Moderate targets offer a balance between feasibility and impact."
-                  calculatorType="Uplift Targets"
-                />
+              </div>
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Moderate</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Multiplier:</span>
+                    <input
+                      type="number"
+                      value={stdDevMultipliers.moderate}
+                      onChange={(e) => handleMultiplierChange('moderate', e.target.value)}
+                      className="w-20 px-2 py-1 border rounded text-right"
+                      step="0.1"
+                      min="0"
+                    />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Uplift:</span>
+                    <span className="text-lg font-bold text-[#ffaa0c]">{formatUplift(uplifts.moderate)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Target:</span>
+                    <span className="text-lg font-bold text-[#ffaa0c]">
+                      {kpiData && kpiData.mean !== null ? formatValue(kpiData.mean * (1 + uplifts.moderate)) : '0'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Aggressive</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Multiplier:</span>
+                    <input
+                      type="number"
+                      value={stdDevMultipliers.aggressive}
+                      onChange={(e) => handleMultiplierChange('aggressive', e.target.value)}
+                      className="w-20 px-2 py-1 border rounded text-right"
+                      step="0.1"
+                      min="0"
+                    />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Uplift:</span>
+                    <span className="text-lg font-bold text-[#e8506e]">{formatUplift(uplifts.aggressive)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Target:</span>
+                    <span className="text-lg font-bold text-[#e8506e]">
+                      {kpiData && kpiData.mean !== null ? formatValue(kpiData.mean * (1 + uplifts.aggressive)) : '0'}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
             {chartData && (
-              <div className="h-80">
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="text-sm font-medium text-gray-700">Historical Data Visualization</h4>
-                  <HelpButton
-                    title="Understanding the Chart"
-                    content="This chart visualizes your historical data (black dots), the mean (blue dashed line), and your uplift targets (colored dashed lines). The targets show what your metric would need to achieve to reach each uplift level. Use this visualization to understand the scale of improvement needed for each target."
-                    calculatorType="Data Visualization"
-                  />
+              <div className="bg-white p-4 rounded-lg shadow">
+                <div className="h-[400px]">
+                  <Line data={chartData} options={chartOptions} />
                 </div>
-                <Line data={chartData} options={chartOptions} />
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={handleDownloadPDF}
+                    className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download PDF
+                  </button>
+                </div>
               </div>
             )}
-
-            <div className="flex justify-end">
-              <button
-                onClick={handleDownloadPDF}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download PDF Report
-              </button>
-            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
