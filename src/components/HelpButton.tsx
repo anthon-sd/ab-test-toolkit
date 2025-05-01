@@ -14,19 +14,6 @@ const HelpButton: React.FC<HelpButtonProps> = ({ title, content, calculatorType 
   const buttonRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
-  // Split content into sentences and add line breaks with extra spacing
-  const formattedContent = content.split('. ').map((sentence, index, array) => (
-    <React.Fragment key={index}>
-      {sentence}{index < array.length - 1 ? '.' : ''}
-      {index < array.length - 1 && (
-        <>
-          <br />
-          <br />
-        </>
-      )}
-    </React.Fragment>
-  ));
-
   useEffect(() => {
     if (showHelp && buttonRef.current) {
       const buttonRect = buttonRef.current.getBoundingClientRect();
